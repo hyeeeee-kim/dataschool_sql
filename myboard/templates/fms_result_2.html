@@ -1,0 +1,127 @@
+{% extends 'base.html' %} {% block title %}FMS 결과 보기{% endblock %} {% block
+content %}
+
+<style>
+  .fms-container {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .fms-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+  
+  .fms-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .fms-table thead {
+    background-color: #8974ff;
+    color: white;
+  }
+  
+  .fms-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #ddd;
+  }
+  
+  .fms-table td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .fms-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .fms-table tbody tr:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .fms-table tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+</style>
+
+<div class="fms-container">
+  <h2>FMS 통합 결과</h2>
+  <table class="fms-table">
+    <thead>
+      <tr>
+        {% if results and results[0] %}
+        {% for column in results[0].keys() %}
+        <th>{{ column }}</th>
+        {% endfor %}
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in results %}
+      <tr>
+        {% for key, value in row.items() %}
+        <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function openModal(chickId) {
+    const modal = document.getElementById('detailModal');
+    const modalBody = document.getElementById('modalBody');
+    
+    // Fetch detail data
+    fetch(`/fms/detail/${chickId}`)
+      .then(response => response.json())
+      .then(data => {
+        let content = '';
+        
+        if (data.chick_info) {
+          content += `<p><strong>닭 번호:</strong> ${data.chick_info.chick_no}</p>`;
+        }
+        
+        if (data.breeds_info) {
+          content += `<p><strong>품종:</strong> ${data.breeds_info.code_desc}</p>`;
+        } else {
+          content += `<p><strong>품종:</strong> 정보 없음</p>`;
+        }
+        
+        if (data.health_info) {
+          content += `<p><strong>무게:</strong> ${data.health_info.weight} kg</p>`;
+          content += `<p><strong>측정 날짜:</strong> ${data.health_info.measurement_date}</p>`;
+        } else {
+          content += `<p><strong>무게:</strong> 정보 없음</p>`;
+        }
+        
+        modalBody.innerHTML = content;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        modalBody.innerHTML = '<p>데이터를 불러올 수 없습니다.</p>';
+      });
+    
+    modal.style.display = 'block';
+  }
+  
+  function closeModal() {
+    const modal = document.getElementById('detailModal');
+    modal.style.display = 'none';
+  }
+  
+  window.onclick = function(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  }
+</script>
+{% endblock %}
