@@ -1,0 +1,95 @@
+{% extends 'base.html' %} {% block title %}FMS 결과 보기{% endblock %} {% block
+content %}
+
+<style>
+  .fms-container {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .fms-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+  
+  .chart-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #7060ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  
+  .chart-link:hover {
+    background-color: #5040dd;
+  }
+  
+  .fms-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .fms-table thead {
+    background-color: #7060ff;
+    color: white;
+  }
+  
+  .fms-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #ddd;
+  }
+  
+  .fms-table td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .fms-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  .fms-table tbody tr:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .fms-table tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+</style>
+
+<div class="fms-container">
+  <h2>FMS 통합 결과</h2>
+  
+  <a href="{{ url_for('fms_chart') }}" class="chart-link">📊 품종별 무게 분포 차트 보기</a>
+  
+  <table class="fms-table">
+    <thead>
+      <tr>
+        {% if results and results[0] %}
+        {% for column in results[0].keys() %}
+        <th>{{ column }}</th>
+        {% endfor %}
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in results %}
+      <tr>
+        {% for key, value in row.items() %}
+        <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
